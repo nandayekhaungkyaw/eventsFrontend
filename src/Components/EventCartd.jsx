@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { EventImageGet } from "../../Services/EventFetching";
 import { Link } from "react-router-dom";
+import miniloading from "../../public/loadingMini.gif"
 
 export default function EventCard({ event }) {
   // Transform the data to match the UI expectations
 
   const [images, setImages] = useState([]);
   const [eventData, setEventData] = useState(null);
+
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -66,7 +68,9 @@ export default function EventCard({ event }) {
 
 
   const categories = [event.category] // In real app, this would be passed as prop
-if (!eventData) return <div>Loading...</div>;
+if (!eventData) return <div className="">
+  <img src={miniloading} alt="" className="size-10 flex justify-center items-center" />
+</div>;
 
 
   return (

@@ -7,6 +7,7 @@ import Breadcrumb from "../Components/Breadcrumb"
 import toast, { Toaster } from "react-hot-toast"
 import Swal from "sweetalert2"
 import FaqSection from "../Components/FaqSection"
+import Loading from "../Components/Loading"
 
 export default function EventDetail() {
   const [selectedTicket, setSelectedTicket] = useState(null)
@@ -49,14 +50,36 @@ export default function EventDetail() {
     return `${formatTimeString(startTime)} - ${formatTimeString(endTime)}`
   }
 
+  const paymentOptions = [
+  "KBZ",
+  "AYA",
+  "WAVE MONEY",
+  "CB PAY",
+  "MPT PAY",
+  "OK PAY",
+  "K PAY",
+  "E-WALLET",
+  ]
+
   const initialOrderData = {
   first_name: "",
   last_name: "",
   email: "",
   confirmed_email: "",
   phone: "",
+  transaction_id: "",
   payment_method: "KBZ",
 };
+useEffect(() => {
+  if (Number(selectedTicket?.amount) === 0) {
+    setOrderData((prev) => ({
+      ...prev,
+      transaction_id: "Free Event",
+      payment_method: "Free",
+    }));
+  }
+}, [selectedTicket]);
+
 
 const [orderData, setOrderData] = useState(initialOrderData);
 
@@ -139,6 +162,7 @@ useEffect(() => {
     };
 
     try {
+      console.log(order)
       const response = await OrderPost(`${import.meta.env.VITE_API_URL}/order`, order);
       console.log(response.statusCode);
       toast.success(response.message);
@@ -163,9 +187,9 @@ useEffect(() => {
 
 
   const totalAmount = selectedTicket ? selectedTicket.amount * quantity : 0
-console.log(event)
+
 if (loading) {
-  return <div>Loading...</div>;
+  return <Loading />;
 }
 
 if (!event) {
@@ -397,31 +421,76 @@ if (!event) {
                 />
               </div>
                <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Id from your payment</label>
-                  <input
-                    type="text"
-                    name="transaction_id"
-                    value={orderData.transaction_id}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-               <div>
+{Number(selectedTicket?.amount) === 0 ? (
+  <>
+   
+
+    {/* Disabled input only for display */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Transaction Info
+      </label>
+      <input
+        type="text"
+        value="Free Event"
+        disabled
+        className="w-full bg-gray-100 text-gray-600 border border-gray-300 rounded-lg px-3 py-2"
+      />
+    </div>
+  </>
+) : (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Transaction Id from your payment
+    </label>
+    <input
+      type="text"
+      name="transaction_id"
+      value={orderData.transaction_id}
+      onChange={handleInputChange}
+      required
+      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+)}
+
+
+                
+              {Number(selectedTicket?.amount)  !==0 &&(
+                 <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
-                <select
-                  name="payment_method"
-                  value={orderData.payment_method}
-                  onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="KBZ">KBZ Pay</option>
-                  <option value="WAVE MONEY">Wave Money</option>
-                  <option value="AYA">AYA Pay</option>
-                  <option value="CB">CB Pay</option>
-                </select>
+               <select
+  name="payment_method"
+  
+  onChange={handleInputChange}
+  required
+  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  {paymentOptions.map((method) => (
+    <option  key={method} value={method}>
+      {method === "KBZ"
+        ? "KBZ Pay"
+        : method === "AYA"
+        ? "AYA Pay"
+        : method === "CB PAY"
+        ? "CB Pay"
+        : method === "MPT PAY"
+        ? "MPT Pay"
+        : method === "OK PAY"
+        ? "OK Pay"
+        : method === "K PAY"
+        ? "K Pay"
+        : method === "E-WALLET"
+        ? "E-Wallet"
+        : method === "WAVE MONEY"
+        ? "Wave Money"
+        
+        : method}
+    </option>
+  ))}
+</select>
               </div>
+              )}
               </div>
 
               

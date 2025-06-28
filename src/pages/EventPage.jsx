@@ -10,6 +10,7 @@ import Events from "../Components/Events"
 import { EventGet } from "../../Services/EventFetching"
 
 
+
 const EventPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(0)
   const [searchTerm, setSearchTerm] = useState("")

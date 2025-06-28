@@ -2,7 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form';
 import { login } from '../../../Services/Auth';
 import Cookies from 'js-cookie';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 
@@ -23,6 +23,11 @@ navigate("/dashboard")
   }
   console.log(errors);
   return (
+<>
+<Toaster
+  position="top-right"
+  reverseOrder={false}
+/>
 <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto mt-12 bg-white p-8 rounded-xl shadow-md space-y-6">
   <h2 className="text-2xl font-bold text-center text-gray-800">Login Your Account</h2>
   <div>
@@ -44,6 +49,7 @@ navigate("/dashboard")
     Login Account
   </button>
 </form>
+</>
 
 
   )

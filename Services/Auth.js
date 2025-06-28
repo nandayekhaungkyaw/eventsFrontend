@@ -5,11 +5,20 @@ import { AuthGet, EventGet } from "./EventFetching";
 
 
 export async function login(email, password) {
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password }, { headers: { 'Content-Type': 'application/json' } });
+  try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password }, { headers: { 'Content-Type': 'application/json' } });
     Cookies.set('token', response.data.access_token);
     console.log(response.data)
+    toast.success(response.data.message);
   
-    return response.data; // return only the data part
+  
+    return response.data; 
+  }catch (error) {
+    console.error('Login Error:', error);
+    toast.error(error.response.data.message);
+    throw error; // rethrow so caller can handle if needed
+  }
+  // return only the data part
 }
 
 export async function EventPOstAuth(url,data) {

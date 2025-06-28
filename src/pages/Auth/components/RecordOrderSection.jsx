@@ -1,28 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FaEye } from 'react-icons/fa';
 import { AuthGet } from '../../../../Services/EventFetching';
+import Pagination from './Pagination';
+import debounce from 'lodash.debounce';
 
 const RecordOrderSection = ({ viewDetails}) => {
   const [recordOrder, setRecordOrder] = useState([]);
   const [search, setSearch] = useState('');
+  const [links, setLinks] = useState([]);
+  const [currentUrl, setCurrentUrl] = useState(`${import.meta.env.VITE_API_URL}/order/saveRecord/all`);
 
   useEffect(() => {
     async function fetchData() {
-      const fetched = await AuthGet(`${import.meta.env.VITE_API_URL}/order/saveRecord/all`);
-      setRecordOrder(fetched);
+      const fetched = await AuthGet(`${currentUrl}`);
+      setRecordOrder(fetched.data);
+      setLinks(fetched.links);
+      console.log(fetched);
     }
     fetchData();
-  }, []);
+  }, [currentUrl]);
 
-  const filteredOrders = recordOrder.filter((order) => {
-    const searchLower = search.toLowerCase();
-    return (
-      order.first_name.toLowerCase().includes(searchLower) ||
-      order.last_name.toLowerCase().includes(searchLower) ||
-      order.email.toLowerCase().includes(searchLower) ||
-      order.total_amount.toString().includes(searchLower)
-    );
-  });
+  const debouncedSearch = useCallback(
+    debounce((value) => {
+      if (value.trim() !== "") {
+        setCurrentUrl(`http://127.0.0.1:8000/api/order/search/${value}`);
+      } else {
+        setCurrentUrl("http://127.0.0.1:8000/api/order/saveRecord/all");
+      }
+    }, 500),
+    []
+  );
+
+  // Trigger debounced search
+  useEffect(() => {
+    debouncedSearch(search);
+  }, [search]);
 
   return (
     <div className="p-6">
@@ -54,7 +66,7 @@ const RecordOrderSection = ({ viewDetails}) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredOrders.map((order) => (
+            {recordOrder.map((order) => (
               <tr key={order.id}>
                 <td className="px-6 py-4 text-sm text-gray-900">{order.event_title}</td>
                 <td className="px-6 py-4 text-sm text-gray-900">{order.ticket_title}</td>
@@ -77,7 +89,7 @@ const RecordOrderSection = ({ viewDetails}) => {
                 </td>
               </tr>
             ))}
-            {filteredOrders.length === 0 && (
+            {recordOrder.length === 0 && (
               <tr>
                 <td colSpan="7" className="px-6 py-4 text-center text-gray-500">No records found.</td>
               </tr>
@@ -85,6 +97,7 @@ const RecordOrderSection = ({ viewDetails}) => {
           </tbody>
         </table>
       </div>
+       <Pagination links={links} onPageChange={(url) => setCurrentUrl(url)} />
     </div>
   );
 };
