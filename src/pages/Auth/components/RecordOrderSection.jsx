@@ -4,8 +4,8 @@ import { AuthGet } from '../../../../Services/EventFetching';
 import Pagination from './Pagination';
 import debounce from 'lodash.debounce';
 
-const RecordOrderSection = ({ viewDetails}) => {
-  const [recordOrder, setRecordOrder] = useState([]);
+const RecordOrderSection = ({ viewDetails,recordOrder,setRecordOrder}) => {
+console.log("this is ",recordOrder)
   const [search, setSearch] = useState('');
   const [links, setLinks] = useState([]);
   const [currentUrl, setCurrentUrl] = useState(`${import.meta.env.VITE_API_URL}/order/saveRecord/all`);
@@ -66,7 +66,7 @@ const RecordOrderSection = ({ viewDetails}) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {recordOrder.map((order) => (
+            {recordOrder?.map((order) => (
               <tr key={order.id}>
                 <td className="px-6 py-4 text-sm text-gray-900">{order.event_title}</td>
                 <td className="px-6 py-4 text-sm text-gray-900">{order.ticket_title}</td>

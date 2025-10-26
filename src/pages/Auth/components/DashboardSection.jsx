@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { RelatedMutate } from '../../../../Services/Auth';
 import TicketSalesChart from './TicketSalesChart';
 
-const DashboardSection = ({ events, orders, categories, tickets, mutate: { setEvents, setTickets, setOrders, setCategories } }) => {
-  const [recordedOrders, setRecordedOrders] = useState([]);
+const DashboardSection = ({ events, orders, categories, tickets, mutate: { setEvents, setTickets, setOrders, setCategories,recordedOrders,setRecordedOrders } }) => {
+
   const [selectedEvent, setSelectedEvent] = useState('');
   const [eventOptions, setEventOptions] = useState([]);
 
@@ -14,6 +14,7 @@ const DashboardSection = ({ events, orders, categories, tickets, mutate: { setEv
     RelatedMutate("order", setOrders);
     RelatedMutate("category", setCategories);
     RelatedMutate("recordOrder", setRecordedOrders);
+    console.log('recordOrder',recordedOrders);
   }, []);
 
   useEffect(() => {
@@ -93,7 +94,7 @@ const DashboardSection = ({ events, orders, categories, tickets, mutate: { setEv
       </div>
 
       {/* 🎯 Chart Filter + Chart */}
-      <div className="mb-6">
+      <div className="mb-6   ">
         <label htmlFor="event-select" className="block mb-2 font-semibold text-gray-700">Select Event</label>
         <select
           id="event-select"
@@ -107,7 +108,9 @@ const DashboardSection = ({ events, orders, categories, tickets, mutate: { setEv
         </select>
       </div>
 
-      <TicketSalesChart salesData={salesData} />
+    <div className='bg-white p-6 rounded-lg shadow w-2/3'>
+        <TicketSalesChart salesData={salesData} />
+    </div>
     </div>
   );
 };
