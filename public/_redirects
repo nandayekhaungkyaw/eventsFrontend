@@ -1,1 +1,4 @@
 /api/*  http://event-mcb5.teapos.shop/api/:splat  200
+
+/storage/*  http://event-mcb5.teapos.shop/storage/:splat  200
+
